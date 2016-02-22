@@ -1,0 +1,10 @@
+ALERT NodeRebootsTooOften
+      IF changes(node_boot_time{job="node"}[1d]) > 1
+      SUMMARY "Node rebooots too often"
+      DESCRIPTION "Node {{ $labels.instance }} rebooots too often ({{ $value }} is more than 1 times per 1d)"
+
+ALERT NodeFilesystemUsageHigh
+      IF node_filesystem_free{job='node',filesystem!~"^/run(/|$)"} / node_filesystem_size{job='node'} < 0.2
+      SUMMARY "Node filesystem usage is high"
+      DESCRIPTION "Node {{ $labels.instance }}'s filesystem {{ $labels.filesystem }} has less than 20% disk space remaining."
+      
