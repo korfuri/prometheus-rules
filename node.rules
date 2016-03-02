@@ -8,3 +8,18 @@ ALERT NodeFilesystemUsageHigh
       SUMMARY "Node filesystem usage is high"
       DESCRIPTION "Node {{ $labels.instance }}'s filesystem {{ $labels.filesystem }} has less than 20% disk space remaining."
       
+ALERT CronCompletionTooLongAgo
+      IF (cron_completion_date{job='node',frequency='monthly'} < time() - (2592000*3))
+      OR (cron_completion_date{job='node',frequency='weekly'} < time() - (604800*3))
+      OR (cron_completion_date{job='node',frequency='daily'} < time() - (86400*3))
+      OR (cron_completion_date{job='node',frequency='hourly'} < time() - (3600*3))
+      OR (cron_completion_date{job='node',frequency='biminutely'} < time() - (120*3))
+      OR (cron_completion_date{job='node',frequency='minutely'} < time() - (60*3))
+      SUMMARY "Cron job last completion too long ago"
+      DESCRIPTION "Cron job {{ $labels.task }} last successful run was at {{ $value }}, more than 3 failures ago for a {{ $labels.frequency }} cronjob."
+
+ALERT RebootRequired
+      IF node_reboot_required > 0
+      SUMMARY "Node reboot required"
+      DESCRIPTION "Node {{ $labels.instance }} requires a reboot."
+
