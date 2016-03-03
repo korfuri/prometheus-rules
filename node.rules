@@ -23,3 +23,13 @@ ALERT RebootRequired
       SUMMARY "Node reboot required"
       DESCRIPTION "Node {{ $labels.instance }} requires a reboot."
 
+ALERT AptUpgradesWaiting
+      IF debian_updates_pending{type!='security'} > 0
+      FOR 1d
+      SUMMARY "APT upgrades are waiting"
+      DESCRIPTION "Node {{ $labels.instance }} has {{ $value }} upgrades of type {{ $labels.type }} pending. Please run apt-get upgrade soon."
+
+ALERT AptSecurityUpgradesWaiting
+      IF debian_updates_pending{type='security'} > 0
+      SUMMARY "APT security upgrades are waiting"
+      DESCRIPTION "Node {{ $labels.instance }} has {{ $value }} upgrades of type {{ $labels.type }} pending. Please run apt-get upgrade as soon as possible."
