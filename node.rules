@@ -1,7 +1,18 @@
+ALERT JobInstanceDown
+      IF up == 0
+      FOR 5m
+      SUMMARY "Job instance is down"
+      DESCRIPTION "Job {{ $labels.job }} instance {{ $labels.instance }} is down."
+
+ALERT JobInstanceFlapping
+      IF changes(process_start_time_seconds[1h]) > 3
+      SUMMARY "Job instance is failing too often"
+      DESCRIPTION "Job {{ $labels.instance }} instance {{ $labels.instance }} has failed {{ $value }} times in the last 1h."
+
 ALERT NodeRebootsTooOften
       IF changes(node_boot_time{job="node"}[1d]) > 1
       SUMMARY "Node rebooots too often"
-      DESCRIPTION "Node {{ $labels.instance }} rebooots too often ({{ $value }} is more than 1 times per 1d)"
+      DESCRIPTION "Node {{ $labels.instance }} reboots too often ({{ $value }} is more than 1 times per 1d)"
 
 ALERT NodeFilesystemUsageHigh
       IF node_filesystem_free{job='node',filesystem!~"^/run(/|$)"} / node_filesystem_size{job='node'} < 0.2
